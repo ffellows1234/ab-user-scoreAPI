@@ -8,7 +8,7 @@ router.post("/register", async (req, res) => {
     try {
 
         // Store email & username from body
-        let { displayName, email } = req.body;
+        let { displayName, email, points } = req.body;
 
         // Form validation
         if(!displayName) return res.status(400).json({ msg: 'Username required' })
@@ -16,12 +16,13 @@ router.post("/register", async (req, res) => {
         // Make email undefined if empty
         if(!email) email = undefined;
 
+        if(!score) points = 0;
 
         // Define new user from model
         const newUser = new User ({
             displayName,
             email,
-            score
+            points
         })
 
         // Generate JWT Token

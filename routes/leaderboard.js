@@ -20,7 +20,7 @@ router.get('/get', (req, res) => {
         });
 });
 
-//model that is posted to mognoDB
+//model that is posted to mongoDB
 router.post('/save', (req, res) => {
     console.log('Body:', req.body)
     const data = req.body;
@@ -34,20 +34,33 @@ router.post('/save', (req, res) => {
         } else {
 
             res.json({
-                msg: 'data has been saved to db!!!!'
+                msg: 'data has been saved to db!'
             });
         }
     })
 });
 
-router.get('/name', (req, res) => {
+// "/users" needs to be the NAME of Database
 
-        const data = {
-            username: 'fred',
-            score: 340
-        };
+// Access the leaderboard
+router.get('/users', async function(req, res) {
+    
+    // retrieve ‘lim’ from the query string info
+    let { lim } = req.query;
+    
+    db.collection('users')
+        .find()
+        // -1 is for descending leaderboard position
+        .sort({ score: -1 })
+        // Show only [lim] players
+        .limit(lim)
+        .toArray(function(err, result) {
+            if (err)
+                res.send({ status: false, msg: 'failed to retrieve scores' });
+            console.log(Array.from(result));
+            res.send({ status: true, msg: result });
+        });
+ });
 
-        res.json(data);
-});
 
 module.exports = router;
